@@ -1,0 +1,4 @@
+:HL["/challenger-quiz-ui/_next/static/chunks/86807ffc2c568790.css","style"]
+:HL["/challenger-quiz-ui/_next/static/chunks/9cae86c1b263efd2.css","style"]
+:HL["https://fonts.googleapis.com/icon?family=Material+Icons+Outlined","style"]
+0:{"buildId":"puGixDsftD89mEbCVAfQ5","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
