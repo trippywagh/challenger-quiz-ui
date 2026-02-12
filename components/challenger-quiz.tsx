@@ -50,7 +50,7 @@ const questions: Question[] = [
   },
 ]
 
-const botName = "Ray-Z"
+const botName = "Equation-X"
 
 export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
   const [gameState, setGameState] = useState<"waiting" | "countdown" | "playing" | "result">("waiting")
@@ -229,9 +229,9 @@ export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
             <div className="text-2xl font-bold text-[#60a5fa]">VS</div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#f59e0b] mb-2">
-                <img src="/ray-z.jpg" alt="Ray-Z" className="w-full h-full object-cover" />
+                <img src="/ray-z.jpg" alt="Equation-X" className="w-full h-full object-cover" />
               </div>
-              <p className="text-sm font-medium">{mode === "bot" ? "Ray-Z" : "Friend"}</p>
+              <p className="text-sm font-medium">{mode === "bot" ? "Equation-X" : "Friend"}</p>
             </div>
           </div>
 
@@ -314,9 +314,9 @@ export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
               <div className="text-gray-500 text-sm">VS</div>
               <div className="text-center">
                 <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#f59e0b] mx-auto mb-2">
-                  <img src="/ray-z.jpg" alt="Ray-Z" className="w-full h-full object-cover" />
+                  <img src="/ray-z.jpg" alt="Equation-X" className="w-full h-full object-cover" />
                 </div>
-                <p className="text-sm text-gray-400">{mode === "bot" ? "Ray-Z" : "Friend"}</p>
+                <p className="text-sm text-gray-400">{mode === "bot" ? "Equation-X" : "Friend"}</p>
                 <p className="text-2xl font-bold text-[#f59e0b]">{opponentScore}</p>
               </div>
             </div>
@@ -411,7 +411,7 @@ export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
           <div className="flex items-center gap-2">
             <span className="font-bold">{opponentScore}</span>
             <div className="w-8 h-8 rounded-full overflow-hidden border border-[#f59e0b]">
-              <img src="/ray-z.jpg" alt="Ray-Z" className="w-full h-full object-cover" />
+              <img src="/ray-z.jpg" alt="Equation-X" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
