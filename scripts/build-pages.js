@@ -7,6 +7,7 @@ const root = path.join(__dirname, '..')
 const basePath = '/challenger-quiz-ui'
 
 process.env.BASE_PATH = basePath
+process.env.NEXT_PUBLIC_BASE_PATH = basePath
 execSync('npm run build', { cwd: root, stdio: 'inherit' })
 
 const outDir = path.join(root, 'out')

@@ -12,7 +12,7 @@ export default function ChapterLanding({ onStartChallenge }: ChapterLandingProps
         <img
           alt="Mathematical patterns background"
           className="w-full h-full object-cover"
-          src="images/quadratic-hero.jpg"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/images/quadratic-hero.jpg`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent" />
         <div className="absolute top-12 left-0 right-0 px-6 flex justify-between items-center z-10">
