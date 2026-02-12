@@ -12,7 +12,7 @@ const inter = Inter({ weight: ["400", "500", "600", "700"], subsets: ["latin"], 
 
 export const metadata: Metadata = {
   title: 'Quadratic Equations - Learning Hub',
-  description: 'Learn Algebra with interactive lessons and challenger quizzes',
+  description: 'Learn Algebra ith interactive lessons and challenger quizzes',
   generator: 'v0.app',
   icons: {
     icon: [
