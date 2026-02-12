@@ -1,4 +1,4 @@
-:HL["/challenger-quiz-ui/_next/static/chunks/86807ffc2c568790.css","style"]
-:HL["/challenger-quiz-ui/_next/static/chunks/df9913f765ae47e1.css","style"]
+:HL["/challenger-quiz-ui/_next/static/chunks/8df1746195f4f651.css","style"]
+:HL["/challenger-quiz-ui/_next/static/chunks/e965b3e7339dc9cb.css","style"]
 :HL["https://fonts.googleapis.com/icon?family=Material+Icons+Outlined","style"]
-0:{"buildId":"z0qFb6JAicShndcw8_uSa","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+0:{"buildId":"49FoDwIFdjtz10Nqm9t5A","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
