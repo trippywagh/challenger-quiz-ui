@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { X, Zap, Clock, Trophy, Star, ArrowRight, RotateCcw } from "lucide-react"
+import { X, Zap, Clock, Trophy, Star, ArrowRight, RotateCcw, HelpCircle, Gauge } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface ChallengerQuizProps {
   mode: "friend" | "bot"
   onExit: () => void
+  onScreenChange?: () => void
 }
 
 interface Question {
@@ -52,8 +53,12 @@ const questions: Question[] = [
 
 const botName = "Equation-X"
 
-export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
+export default function ChallengerQuiz({ mode, onExit, onScreenChange }: ChallengerQuizProps) {
   const [gameState, setGameState] = useState<"waiting" | "countdown" | "playing" | "result">("waiting")
+
+  useEffect(() => {
+    onScreenChange?.()
+  }, [gameState, onScreenChange])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [playerScore, setPlayerScore] = useState(0)
   const [opponentScore, setOpponentScore] = useState(0)
@@ -165,80 +170,164 @@ export default function ChallengerQuiz({ mode, onExit }: ChallengerQuizProps) {
     setPlayerAnswers([])
   }
 
-  // Waiting Screen
+  // Waiting Screen – Boss Battle / Challenge intro
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ""
+
   if (gameState === "waiting") {
+    if (mode === "bot") {
+      return (
+        <div className="min-h-0 bg-[#0A0118] text-white flex flex-col items-center overflow-hidden relative">
+          <div className="fixed inset-0 grid-bg pointer-events-none opacity-40" />
+          <div className="fixed inset-0 bg-gradient-to-b from-transparent via-[#0A0118]/50 to-[#0A0118] pointer-events-none" />
+
+          <header className="relative w-full px-6 pt-12 pb-4 flex justify-between items-center z-10">
+            <button
+              type="button"
+              onClick={onExit}
+              className="w-10 h-10 flex items-center justify-center rounded-full boss-glass-card"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2 px-4 py-1.5 boss-glass-card rounded-full">
+              <Star className="w-4 h-4 text-[#F59E0B]" />
+              <span className="text-xs font-bold tracking-widest uppercase">Rank: Elite</span>
+            </div>
+          </header>
+
+          <main className="relative z-10 w-full max-w-md px-6 flex flex-col items-center flex-shrink-0">
+            <div className="mt-4 mb-6 relative">
+              <div className="absolute inset-0 bg-[#3B82F6] blur-3xl opacity-20 rounded-full" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#3B82F6] to-[#8B5CF6] flex items-center justify-center shadow-2xl relative border border-white/20">
+                <Zap className="w-10 h-10 text-white lightning-bolt" />
+              </div>
+            </div>
+
+            <div className="text-center mb-8">
+              <h1 className="font-display-boss text-3xl font-black neon-glow tracking-tighter text-white uppercase italic">
+                Boss Battle
+                <br />
+                <span className="text-[#8B5CF6]">Equation-X</span>
+              </h1>
+              <p className="mt-3 text-slate-400 text-sm font-medium leading-relaxed max-w-[280px] mx-auto">
+                Conquer the master of Quadratics in a high-speed duel!
+              </p>
+            </div>
+
+            <div className="w-full space-y-3 mb-10">
+              <div className="boss-glass-card p-4 rounded-2xl flex items-center gap-4 transition-transform hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/20 flex items-center justify-center border border-[#3B82F6]/30">
+                  <HelpCircle className="w-5 h-5 text-[#3B82F6]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-white">5 Questions</h3>
+                  <p className="text-xs text-slate-400">Rapid fire quadratic equations</p>
+                </div>
+              </div>
+              <div className="boss-glass-card p-4 rounded-2xl flex items-center gap-4 transition-transform hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/20 flex items-center justify-center border border-[#F59E0B]/30">
+                  <Gauge className="w-5 h-5 text-[#F59E0B]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-white">Speed Kills</h3>
+                  <p className="text-xs text-slate-400">Bonus points for lightning responses</p>
+                </div>
+              </div>
+              <div className="boss-glass-card p-4 rounded-2xl flex items-center gap-4 transition-transform hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/20 flex items-center justify-center border border-[#8B5CF6]/30">
+                  <Trophy className="w-5 h-5 text-[#8B5CF6]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-white">Boss Rewards</h3>
+                  <p className="text-xs text-slate-400">Exclusive badges & XP multipliers</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex items-center justify-between px-4 mb-5">
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full border-2 border-[#3B82F6] p-1">
+                    <img
+                      src={`${basePath}/avik-das.png`}
+                      alt="You"
+                      className="w-full h-full rounded-full object-cover grayscale-[0.2]"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 bg-[#3B82F6] text-[10px] font-bold px-2 py-0.5 rounded-full text-white border border-[#0A0118]">
+                    YOU
+                  </div>
+                </div>
+                <span className="text-xs font-bold tracking-wider text-slate-300 uppercase">Pro Gamer</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="font-display-boss text-4xl font-black italic text-white pulse-vs">VS</span>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full border-2 border-[#8B5CF6] p-1">
+                    <img
+                      src={`${basePath}/ray-z.jpg`}
+                      alt="Equation-X Boss AI"
+                      className="w-full h-full rounded-full object-cover hue-rotate-[280deg]"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 bg-[#8B5CF6] text-[10px] font-bold px-2 py-0.5 rounded-full text-white border border-[#0A0118]">
+                    BOSS
+                  </div>
+                </div>
+                <span className="text-xs font-bold tracking-wider text-[#8B5CF6] uppercase">Equation-X</span>
+              </div>
+            </div>
+          </main>
+
+          <footer className="relative z-10 w-full px-6 pt-2 pb-6">
+            <button
+              type="button"
+              onClick={startGame}
+              className="w-full py-5 bg-gradient-to-r from-[#8B5CF6] to-purple-400 rounded-2xl text-white font-display-boss font-black text-xl tracking-widest uppercase shadow-[0_0_20px_rgba(139,92,246,0.5)] btn-glow transition-all active:scale-95"
+            >
+              Enter The Arena
+            </button>
+          </footer>
+
+          <div className="fixed top-0 right-0 w-64 h-64 bg-[#8B5CF6] opacity-10 blur-[100px] pointer-events-none" />
+          <div className="fixed bottom-0 left-0 w-64 h-64 bg-[#3B82F6] opacity-10 blur-[100px] pointer-events-none" />
+        </div>
+      )
+    }
+
+    // Friend mode – simpler intro
     return (
       <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
         <header className="flex items-center justify-between p-4 border-b border-gray-800">
-          <button onClick={onExit} className="p-2">
+          <button type="button" onClick={onExit} className="p-2">
             <X className="w-6 h-6" />
           </button>
-          <h1 className="font-bold text-lg">Challenger Quiz</h1>
+          <h1 className="font-bold text-lg">Challenge a Friend</h1>
           <div className="w-10" />
         </header>
-
         <div className="flex-1 flex flex-col items-center justify-center px-6">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2563eb] to-[#60a5fa] flex items-center justify-center mb-6 animate-pulse">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2563eb] to-[#60a5fa] flex items-center justify-center mb-6">
             <Zap className="w-10 h-10" />
           </div>
-          
-          <h2 className="text-2xl font-bold mb-2 text-center">
-            {mode === "bot" ? `Challenge ${botName}` : "Challenge a Friend"}
-          </h2>
-          
-          <p className="text-gray-400 text-center mb-8">
-            {mode === "bot" 
-              ? "Battle against our AI bot in a quick 5-question quiz!"
-              : "Share the link with a friend to start the challenge!"
-            }
-          </p>
-
-          {/* Game Rules */}
-          <div className="w-full bg-[#1a1a24] rounded-2xl p-5 mb-8">
-            <h3 className="font-semibold mb-4 text-center">How to Play</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#2563eb]/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-[#60a5fa]">5</span>
-                </div>
-                <p className="text-sm text-gray-300">Answer 5 quick questions</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#22c55e]/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-[#22c55e]">+10</span>
-                </div>
-                <p className="text-sm text-gray-300">Earn 10 points for correct answers</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#eab308]/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-[#eab308]">+5</span>
-                </div>
-                <p className="text-sm text-gray-300">Bonus 5 points for answering faster!</p>
-              </div>
-            </div>
-          </div>
-
-          {/* VS Display */}
+          <h2 className="text-2xl font-bold mb-2 text-center">Challenge a Friend</h2>
+          <p className="text-gray-400 text-center mb-8">Share the link with a friend to start the challenge!</p>
           <div className="flex items-center gap-6 mb-8">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#2563eb] mb-2">
-                <img src="/avik-das.png" alt="You" className="w-full h-full object-cover" />
+                <img src={`${basePath}/avik-das.png`} alt="You" className="w-full h-full object-cover" />
               </div>
               <p className="text-sm font-medium">You</p>
             </div>
             <div className="text-2xl font-bold text-[#60a5fa]">VS</div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#f59e0b] mb-2">
-                <img src="/ray-z.jpg" alt="Equation-X" className="w-full h-full object-cover" />
+                <img src={`${basePath}/ray-z.jpg`} alt="Friend" className="w-full h-full object-cover" />
               </div>
-              <p className="text-sm font-medium">{mode === "bot" ? "Equation-X" : "Friend"}</p>
+              <p className="text-sm font-medium">Friend</p>
             </div>
           </div>
-
-          <Button
-            onClick={startGame}
-            className="w-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-6 rounded-full text-lg font-semibold"
-          >
+          <Button onClick={startGame} className="w-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-6 rounded-full text-lg font-semibold">
             Start Challenge
           </Button>
         </div>

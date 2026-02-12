@@ -1,7 +1,7 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Cinzel, Inter } from 'next/font/google'
+import { Cinzel, Inter, Orbitron } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -9,6 +9,7 @@ const geist = Geist({ subsets: ["latin"] })
 const geistMono = Geist_Mono({ subsets: ["latin"] })
 const cinzel = Cinzel({ weight: "700", subsets: ["latin"], variable: "--font-display" })
 const inter = Inter({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-sans-inter" })
+const orbitron = Orbitron({ weight: ["400", "700", "900"], subsets: ["latin"], variable: "--font-display-boss" })
 
 export const metadata: Metadata = {
   title: 'Quadratic Equations - Learning Hub',
@@ -46,7 +47,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${geist.variable} ${geistMono.variable} ${cinzel.variable} ${inter.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${cinzel.variable} ${inter.variable} ${orbitron.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>

@@ -143,6 +143,39 @@
   font-family: var(--font-sans-inter), Inter, sans-serif;
 }
 
+/* Boss Battle / Equation-X intro screen */
+.neon-glow {
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.4);
+}
+.btn-glow:active {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+  transform: scale(0.98);
+}
+.boss-glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.grid-bg {
+  background-image: linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center center;
+}
+.pulse-vs {
+  animation: boss-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes boss-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+.lightning-bolt {
+  filter: drop-shadow(0 0 15px #3B82F6);
+}
+.font-display-boss {
+  font-family: var(--font-display-boss), Orbitron, sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
