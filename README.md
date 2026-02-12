@@ -5,41 +5,43 @@ A prototype quiz app with chapter landing and challenger (friend/bot) modes. Bui
 ## Run locally
 
 ```bash
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
 ## Deploy to GitHub Pages (public URL)
 
-1. **Create a GitHub repo** and push this code:
+This repo uses **Deploy from a branch** (no GitHub Actions). The built site lives in the `docs/` folder.
+
+1. **Build the site and update `docs/`:**
    ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-   git branch -M main
-   git push -u origin main
+   npm run build:pages
    ```
 
-2. **Turn on GitHub Pages** in the repo:
-   - Go to **Settings → Pages**
-   - Under **Build and deployment**, set **Source** to **GitHub Actions**
+2. **Push the `docs` folder:**
+   ```bash
+   git add docs
+   git commit -m "Update site"
+   git push
+   ```
 
-3. **Trigger a deploy**  
-   Pushing to `main` runs the workflow and deploys the site. You can also run it manually: **Actions → Deploy to GitHub Pages → Run workflow**.
+3. **In your GitHub repo:** **Settings → Pages**
+   - **Source:** Deploy from a branch
+   - **Branch:** `main`
+   - **Folder:** **/docs** ← must be **/docs**, not root
+   - Save
 
-4. **Open your site**  
-   After the workflow finishes, the site will be at:
-   - **https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/**
+4. **Open your site:**  
+   **https://YOUR_USERNAME.github.io/challenger-quiz-ui/**
 
-The workflow builds a static export with the correct base path for that URL, so all links and assets work on the live page.
+If you see the README instead of the app, the **Folder** in Settings → Pages is not set to **/docs**.
 
 ## Build for production (static export)
 
 ```bash
-pnpm build
+npm run build
 ```
 
-Output is in the `out/` folder. For GitHub Pages the workflow runs this with `BASE_PATH=/YOUR_REPO_NAME` so the app works at the GitHub Pages URL.
+Output is in the `out/` folder. Use `npm run build:pages` to build and copy into `docs/` for GitHub Pages.
