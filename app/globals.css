@@ -176,6 +176,19 @@
   font-family: var(--font-display-boss), Orbitron, sans-serif;
 }
 
+/* Results screen */
+.neon-glow-victory {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.4);
+}
+.neon-glow-defeat {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.result-glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

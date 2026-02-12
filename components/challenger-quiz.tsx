@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
-import { X, Zap, Clock, Trophy, Star, ArrowRight, RotateCcw, HelpCircle, Gauge } from "lucide-react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { X, Zap, Clock, Trophy, Star, ArrowRight, RotateCcw, HelpCircle, Gauge, Share2, Target } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -68,6 +68,9 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
   const [playerAnsweredFirst, setPlayerAnsweredFirst] = useState(false)
   const [countdown, setCountdown] = useState(3)
   const [playerAnswers, setPlayerAnswers] = useState<boolean[]>([])
+  const [speedBonusCount, setSpeedBonusCount] = useState(0)
+  const gameStartTimeRef = useRef<number | null>(null)
+  const resultTimeRef = useRef<number | null>(null)
 
   // Countdown before game starts
   useEffect(() => {
@@ -76,6 +79,7 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
         const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
         return () => clearTimeout(timer)
       } else {
+        gameStartTimeRef.current = Date.now()
         setGameState("playing")
       }
     }
@@ -125,7 +129,10 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
 
     if (isCorrect) {
       let points = 10
-      if (playerAnsweredFirst) points += 5 // Speed bonus
+      if (playerAnsweredFirst) {
+        points += 5 // Speed bonus
+        setSpeedBonusCount((prev) => prev + 1)
+      }
       setPlayerScore((prev) => prev + points)
     }
 
@@ -153,6 +160,7 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
       setTimeLeft(10)
       setPlayerAnsweredFirst(false)
     } else {
+      resultTimeRef.current = Date.now()
       setGameState("result")
     }
   }
@@ -168,6 +176,9 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
     setPlayerAnsweredFirst(false)
     setCountdown(3)
     setPlayerAnswers([])
+    setSpeedBonusCount(0)
+    gameStartTimeRef.current = null
+    resultTimeRef.current = null
   }
 
   // Waiting Screen – Boss Battle / Challenge intro
@@ -347,107 +358,181 @@ export default function ChallengerQuiz({ mode, onExit, onScreenChange }: Challen
     )
   }
 
-  // Results Screen
+  // Results Screen – revamped with real computed values
   if (gameState === "result") {
     const playerWon = playerScore > opponentScore
     const isDraw = playerScore === opponentScore
+    const correctCount = playerAnswers.filter(Boolean).length
+    const totalQuestions = questions.length
+    const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0
+    const totalTimeSeconds =
+      gameStartTimeRef.current && resultTimeRef.current
+        ? Math.round((resultTimeRef.current - gameStartTimeRef.current) / 1000)
+        : 0
+    const bonusXP = speedBonusCount * 50
+    const circumference = 2 * Math.PI * 56
+    const progressOffset = circumference * (1 - correctCount / totalQuestions)
 
     return (
-      <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-        <header className="flex items-center justify-between p-4 border-b border-gray-800">
-          <button onClick={onExit} className="p-2">
-            <X className="w-6 h-6" />
+      <div className="min-h-0 bg-[#0A0118] text-white flex flex-col items-center overflow-x-hidden relative">
+        <div className="fixed inset-0 grid-bg pointer-events-none opacity-40" />
+        <div className="fixed inset-0 bg-gradient-to-b from-transparent via-[#0A0118]/50 to-[#0A0118] pointer-events-none" />
+        <div className="fixed top-0 right-0 w-64 h-64 bg-[#10B981] opacity-10 blur-[100px] pointer-events-none" />
+        <div className="fixed bottom-0 left-0 w-64 h-64 bg-[#8B5CF6] opacity-10 blur-[100px] pointer-events-none" />
+
+        <header className="relative w-full px-6 pt-10 pb-4 flex justify-end items-center z-10">
+          <button
+            type="button"
+            className="w-10 h-10 flex items-center justify-center rounded-full result-glass-card"
+          >
+            <Share2 className="w-5 h-5" />
           </button>
-          <h1 className="font-bold text-lg">Results</h1>
-          <div className="w-10" />
         </header>
 
-        <div className="flex-1 flex flex-col items-center justify-center px-6">
-          {/* Result Icon */}
-          <div className={cn(
-            "w-24 h-24 rounded-full flex items-center justify-center mb-6",
-            playerWon ? "bg-gradient-to-br from-[#22c55e] to-[#16a34a]" : 
-            isDraw ? "bg-gradient-to-br from-[#eab308] to-[#ca8a04]" :
-            "bg-gradient-to-br from-[#ef4444] to-[#dc2626]"
-          )}>
-            {playerWon ? (
-              <Trophy className="w-12 h-12" />
-            ) : isDraw ? (
-              <span className="text-4xl">🤝</span>
-            ) : (
-              <span className="text-4xl">😢</span>
-            )}
+        <main className="relative z-10 w-full max-w-md px-6 flex flex-col items-center flex-shrink-0">
+          <div className="text-center mt-2 mb-6">
+            <h1
+              className={cn(
+                "font-display-boss text-5xl md:text-6xl font-black tracking-tight italic uppercase scale-110",
+                playerWon && "neon-glow-victory text-[#10B981]",
+                isDraw && "text-[#F59E0B]",
+                !playerWon && !isDraw && "neon-glow-defeat text-[#EF4444]"
+              )}
+            >
+              {playerWon ? "Victory" : isDraw ? "Draw" : "Defeat"}
+            </h1>
+            <p className="text-slate-400 text-xs mt-2 font-display-boss tracking-widest uppercase">
+              {mode === "bot"
+                ? playerWon
+                  ? "Boss Equation-X Defeated"
+                  : isDraw
+                    ? "So close!"
+                    : "Equation-X Wins"
+                : playerWon
+                  ? "You won the duel!"
+                  : isDraw
+                    ? "Tie game"
+                    : "Friend wins"}
+            </p>
           </div>
 
-          <h2 className="text-3xl font-bold mb-2">
-            {playerWon ? "You Won!" : isDraw ? "It's a Draw!" : "Better Luck Next Time!"}
-          </h2>
-          <p className="text-gray-400 mb-8">
-            {playerWon 
-              ? "Amazing performance! Keep it up!" 
-              : isDraw 
-              ? "So close! Try again to win!"
-              : "Practice makes perfect!"}
-          </p>
-
-          {/* Score Comparison */}
-          <div className="w-full bg-[#1a1a24] rounded-2xl p-6 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="text-center">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#2563eb] mx-auto mb-2">
-                  <img src="/avik-das.png" alt="You" className="w-full h-full object-cover" />
-                </div>
-                <p className="text-sm text-gray-400">You</p>
-                <p className="text-2xl font-bold text-[#2563eb]">{playerScore}</p>
-              </div>
-              <div className="text-gray-500 text-sm">VS</div>
-              <div className="text-center">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#f59e0b] mx-auto mb-2">
-                  <img src="/ray-z.jpg" alt="Equation-X" className="w-full h-full object-cover" />
-                </div>
-                <p className="text-sm text-gray-400">{mode === "bot" ? "Equation-X" : "Friend"}</p>
-                <p className="text-2xl font-bold text-[#f59e0b]">{opponentScore}</p>
-              </div>
+          <div className="relative flex items-center justify-center mb-8">
+            <svg className="w-32 h-32 -rotate-90" aria-hidden>
+              <circle
+                cx="64"
+                cy="64"
+                fill="transparent"
+                r="56"
+                stroke="rgba(255,255,255,0.05)"
+                strokeWidth="8"
+              />
+              <circle
+                className="text-[#10B981]"
+                cx="64"
+                cy="64"
+                fill="transparent"
+                r="56"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="8"
+                strokeDasharray={circumference}
+                strokeDashoffset={progressOffset}
+                style={{ transition: "stroke-dashoffset 0.5s ease-out" }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="font-display-boss text-2xl font-black">
+                {correctCount}/{totalQuestions}
+              </span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">
+                Correct
+              </span>
             </div>
+            <div className="absolute inset-0 rounded-full bg-[#10B981]/20 blur-xl -z-10" />
+          </div>
 
-            {/* Answer Summary */}
-            <div className="border-t border-gray-700 pt-4">
-              <p className="text-sm text-gray-400 mb-3">Your Answers</p>
-              <div className="flex justify-center gap-2">
-                {playerAnswers.map((correct, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center font-bold",
-                      correct ? "bg-[#22c55e]/20 text-[#22c55e]" : "bg-[#ef4444]/20 text-[#ef4444]"
-                    )}
-                  >
-                    {correct ? "✓" : "✗"}
+          <div className="grid grid-cols-3 gap-3 w-full mb-8">
+            <div className="result-glass-card rounded-2xl p-3 flex flex-col items-center text-center">
+              <Clock className="w-5 h-5 text-[#3B82F6] mb-1" />
+              <span className="text-[10px] text-slate-400 font-medium uppercase">Time</span>
+              <span className="text-xs font-bold font-display-boss">{totalTimeSeconds}s</span>
+            </div>
+            <div className="result-glass-card rounded-2xl p-3 flex flex-col items-center text-center border-[#F59E0B]/20 border">
+              <Zap className="w-5 h-5 text-[#F59E0B] mb-1" />
+              <span className="text-[10px] text-slate-400 font-medium uppercase">Bonus</span>
+              <span className="text-xs font-bold font-display-boss">+{bonusXP} XP</span>
+            </div>
+            <div className="result-glass-card rounded-2xl p-3 flex flex-col items-center text-center">
+              <Target className="w-5 h-5 text-[#10B981] mb-1" />
+              <span className="text-[10px] text-slate-400 font-medium uppercase">Acc.</span>
+              <span className="text-xs font-bold font-display-boss">{accuracy}%</span>
+            </div>
+          </div>
+
+          <div className="w-full result-glass-card rounded-3xl p-6 relative overflow-hidden mb-6">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-px bg-white/10" />
+            <div className="flex justify-between items-center relative z-10">
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full border-2 border-[#3B82F6] p-0.5">
+                    <img
+                      src={`${basePath}/avik-das.png`}
+                      alt="You"
+                      className="w-full h-full rounded-full object-cover"
+                    />
                   </div>
-                ))}
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#3B82F6] text-[8px] font-black px-2 py-0.5 rounded-full border border-[#0A0118] uppercase">
+                    You
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-display-boss font-black text-white">{playerScore}</div>
+                  <div className="text-[9px] text-slate-400 uppercase font-bold">Points</div>
+                </div>
+              </div>
+              <div className="bg-[#0A0118]/80 px-2 py-1 rounded border border-white/10 z-20">
+                <span className="font-display-boss text-xs font-black italic text-slate-500">VS</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full border-2 border-[#8B5CF6]/50 p-0.5">
+                    <img
+                      src={`${basePath}/ray-z.jpg`}
+                      alt={mode === "bot" ? "Equation-X" : "Friend"}
+                      className="w-full h-full rounded-full object-cover hue-rotate-[280deg] opacity-60"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#8B5CF6]/50 text-[8px] font-black px-2 py-0.5 rounded-full border border-[#0A0118] uppercase">
+                    {mode === "bot" ? "Boss" : "Friend"}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-display-boss font-black text-slate-400">
+                    {opponentScore}
+                  </div>
+                  <div className="text-[9px] text-slate-500 uppercase font-bold">Points</div>
+                </div>
               </div>
             </div>
           </div>
+        </main>
 
-          {/* Actions */}
-          <div className="w-full space-y-3">
-            <Button
-              onClick={resetGame}
-              className="w-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-5 rounded-full font-semibold flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="w-5 h-5" />
-              Play Again
-            </Button>
-            <Button
-              onClick={onExit}
-              variant="outline"
-              className="w-full bg-transparent border-gray-700 text-white hover:bg-gray-800 py-5 rounded-full font-semibold flex items-center justify-center gap-2"
-            >
-              Back to Chapter
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
+        <footer className="relative z-10 w-full p-6 pb-12 space-y-4">
+          <button
+            type="button"
+            onClick={resetGame}
+            className="w-full py-5 bg-gradient-to-r from-[#8B5CF6] to-purple-400 rounded-2xl text-white font-display-boss font-black text-xl tracking-widest uppercase shadow-[0_0_25px_rgba(139,92,246,0.4)] transition-all active:scale-95"
+          >
+            Rematch
+          </button>
+          <button
+            type="button"
+            onClick={onExit}
+            className="w-full py-4 border-2 border-white/10 rounded-2xl text-slate-300 font-display-boss font-bold text-sm tracking-[0.2em] uppercase hover:bg-white/5 transition-all active:scale-95"
+          >
+            Return Home
+          </button>
+        </footer>
       </div>
     )
   }
